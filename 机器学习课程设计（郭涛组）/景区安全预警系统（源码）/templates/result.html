@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>景区安全预警系统</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}">
+</head>
+<style>
+    body {
+        margin: 0;
+        background: rgb(33, 30, 31);
+        text-align: center;
+    }
+
+    .main-part {
+        color: rgb(248, 248, 255);
+    }
+
+    .nav-right {
+        margin-top: 100px;
+        display: block;
+        height: 50px;
+        line-height: 50px;
+        font-size: 16px;
+    }
+</style>
+<body>
+<div class="navbar navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand ">景区安全预警系统</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/index/">监控</a></li>
+                <li><a href="/result/">结果</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</div>
+<div class="main-part">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <img id="show" style="width: 100%; height: 750px" src="/{{ res_dir }}" alt="result">
+            </div>
+            <div class="col-md-2 nav-right">
+                <div class="alert alert-info" role="alert">
+                    人数上限
+                </div>
+                <div class="alert alert-info" role="alert">
+                    <div class="input-group input-group-lg">
+                        <input type="text" id="max-number" class="form-control" value="99" placeholder="人数上限"
+                               aria-describedby="sizing-addon1">
+                    </div>
+                </div>
+                <div id="cur_per" class="alert alert-info" role="alert">
+                    当前人数：{{ all_per }}
+                </div>
+                <div id="density" class="alert alert-info" role="alert">
+                    人流密度：
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.min.js' %}"></script>
+<script>
+    $(function () {
+        {#-----定义计算人流密度函数-----#}
+        function reduce(){
+            var max_per = parseInt($("#max-number").val())
+            var cur_per = {{ all_per }}
+            if (cur_per > max_per) {
+                $("#density").text("人流密度：堵塞")
+                alert("已到达人数容纳上限！！！")
+            } else if (cur_per > max_per * 0.8) {
+                $("#density").text("人流密度：拥挤")
+            } else {
+                $("#density").text("人流密度：空旷")
+            }
+        }
+        {#-----页面加载完成后计算一次-----#}
+        reduce()
+
+        {#-----人数上限改变，进行重新计算-----#}
+        $("#max-number").change(function (){
+            reduce()
+            }
+
+        )
+
+
+    })
+
+</script>
+</body>
+</html>
